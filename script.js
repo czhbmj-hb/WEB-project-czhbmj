@@ -849,7 +849,7 @@ async function submitEnquiry() {
 
         if (error.code === '42501') {
             // RLS policy violation
-            errorMessage += '错误原因：数据库权限配置问题\nReason: Database permission issue\n\n请联系管理员或通过以下方式联系我们：\nPlease contact admin or reach us via:\n📧 Email: stickypoooop@gmail.com\n📞 Phone: 0413428683';
+            errorMessage += '错误原因：数据库权限配置问题\nReason: Database permission issue\n\n请联系管理员或通过以下方式联系我们：\nPlease contact admin or reach us via:\n📧 Email: zhangyanbin_1@hotmail.com\n📞 Phone: 0413428683';
         } else if (error.code === 'PGRST116') {
             // RLS policy not found
             errorMessage += '错误原因：数据库策略未配置\nReason: Database policy not configured\n\n请联系管理员。\nPlease contact admin.';
