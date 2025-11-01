@@ -54,13 +54,13 @@ processBtn.addEventListener('click', function () {
             const categoriesName = categoriesData.map(item => item.name)
             const materialsName = materialsData.map(item => item.name)
             for (const item of jsonData) {
-                if (!categoriesName.includes(item['分类名称']) || !materialsName.includes(item['材料名称'])) {
+                if (!categoriesName.includes(item['分类']) || !materialsName.includes(item['材料名称'])) {
                     errorCount++;
                     validityData.push(item)
                 } else {
                     const productData = {
                         name: item['产品名称'],
-                        category: item['分类名称'],
+                        category: item['分类'],
                         material: item['材料名称'],
                         price: item['价格'],
                         size: item['尺寸'],
