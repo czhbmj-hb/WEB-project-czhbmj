@@ -1389,3 +1389,229 @@ body {
         flex-direction: column;
     }
 }
+
+/* ============================================================ */
+/* XLSX Batch Upload Modal Styles */
+/* ============================================================ */
+
+#xlsxToolModal {
+    z-index: 3100;
+}
+
+.xlsx-tool-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 3100;
+    align-items: center;
+    justify-content: center;
+}
+
+.xlsx-tool-wrapper.active {
+    display: flex;
+}
+
+.xlsx-tool-container {
+    padding: 20px;
+}
+
+.xlsx-upload-section {
+    margin-bottom: 30px;
+}
+
+.xlsx-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+    margin-top: 20px;
+}
+
+.xlsx-upload-area:hover {
+    border-color: #007bff;
+    background-color: #f0f8ff;
+}
+
+.xlsx-upload-area.drag-over {
+    border-color: #007bff;
+    background-color: #e6f2ff;
+}
+
+.xlsx-upload-icon {
+    font-size: 48px;
+    color: #217346;
+    margin-bottom: 15px;
+}
+
+.xlsx-upload-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.xlsx-upload-hint {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.file-info {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+}
+
+.xlsx-section {
+    margin-bottom: 25px;
+}
+
+.xlsx-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.xlsx-template-hint {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    color: #856404;
+}
+
+.xlsx-btn-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.xlsx-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.xlsx-btn i {
+    margin-right: 8px;
+}
+
+.xlsx-btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.xlsx-btn-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.xlsx-btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.xlsx-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message-area {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    display: none;
+}
+
+.message-area.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message-area.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.xlsx-json-output {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 14px;
+    display: none;
+}
+
+.xlsx-upload-area input {
+    display: none;
+}
+
+.xlsx-message {
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.xlsx-message.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.xlsx-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.xlsx-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .xlsx-tool-container {
+        padding: 15px;
+    }
+
+    .xlsx-upload-area {
+        padding: 20px;
+    }
+
+    .xlsx-btn-group {
+        grid-template-columns: 1fr;
+    }
+
+    .xlsx-upload-icon {
+        font-size: 36px;
+    }
+
+    .xlsx-upload-text {
+        font-size: 16px;
+    }
+}
