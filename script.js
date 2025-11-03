@@ -1068,32 +1068,55 @@ let currentImageUrl = null;
 // Initialize Admin Event Listeners
 function initializeAdminListeners() {
     // Admin button
-    document.getElementById('adminBtn').addEventListener('click', () => {
-        const isAuthenticated = sessionStorage.getItem(ADMIN_SESSION_KEY);
-        if (isAuthenticated === 'true') {
-            showAdminDashboard();
-        } else {
-            openAdminLogin();
-        }
-    });
+    const adminBtn = document.getElementById('adminBtn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            const isAuthenticated = sessionStorage.getItem(ADMIN_SESSION_KEY);
+            if (isAuthenticated === 'true') {
+                showAdminDashboard();
+            } else {
+                openAdminLogin();
+            }
+        });
+    }
 
     // Admin login modal
-    document.getElementById('closeAdminLogin').addEventListener('click', closeAdminLogin);
-    document.getElementById('cancelAdminLogin').addEventListener('click', closeAdminLogin);
-    document.getElementById('submitAdminLogin').addEventListener('click', submitAdminLogin);
+    const closeAdminLoginBtn = document.getElementById('closeAdminLogin');
+    if (closeAdminLoginBtn) {
+        closeAdminLoginBtn.addEventListener('click', closeAdminLogin);
+    }
+
+    const cancelAdminLoginBtn = document.getElementById('cancelAdminLogin');
+    if (cancelAdminLoginBtn) {
+        cancelAdminLoginBtn.addEventListener('click', closeAdminLogin);
+    }
+
+    const submitAdminLoginBtn = document.getElementById('submitAdminLogin');
+    if (submitAdminLoginBtn) {
+        submitAdminLoginBtn.addEventListener('click', submitAdminLogin);
+    }
 
     // Enter key for admin login
-    document.getElementById('adminKeyInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            submitAdminLogin();
-        }
-    });
+    const adminKeyInput = document.getElementById('adminKeyInput');
+    if (adminKeyInput) {
+        adminKeyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitAdminLogin();
+            }
+        });
+    }
 
     // Logout button
-    document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logoutAdmin);
+    }
 
     // Add product button
-    document.getElementById('addProductBtn').addEventListener('click', () => openProductForm());
+    const addProductBtn = document.getElementById('addProductBtn');
+    if (addProductBtn) {
+        addProductBtn.addEventListener('click', () => openProductForm());
+    }
 
     // Admin search
     const adminSearchInput = document.getElementById('adminSearchInput');
@@ -1105,17 +1128,39 @@ function initializeAdminListeners() {
     }
 
     // Product form modal
-    document.getElementById('closeProductForm').addEventListener('click', closeProductForm);
-    document.getElementById('cancelProductForm').addEventListener('click', closeProductForm);
-    document.getElementById('saveProduct').addEventListener('click', saveProduct);
+    const closeProductFormBtn = document.getElementById('closeProductForm');
+    if (closeProductFormBtn) {
+        closeProductFormBtn.addEventListener('click', closeProductForm);
+    }
+
+    const cancelProductFormBtn = document.getElementById('cancelProductForm');
+    if (cancelProductFormBtn) {
+        cancelProductFormBtn.addEventListener('click', closeProductForm);
+    }
+
+    const saveProductBtn = document.getElementById('saveProduct');
+    if (saveProductBtn) {
+        saveProductBtn.addEventListener('click', saveProduct);
+    }
 
     // Image upload handlers
-    document.getElementById('selectImageBtn').addEventListener('click', () => {
-        document.getElementById('productImageFile').click();
-    });
+    const selectImageBtn = document.getElementById('selectImageBtn');
+    const productImageFile = document.getElementById('productImageFile');
 
-    document.getElementById('productImageFile').addEventListener('change', handleImageSelect);
-    document.getElementById('removeImageBtn').addEventListener('click', removeSelectedImage);
+    if (selectImageBtn && productImageFile) {
+        selectImageBtn.addEventListener('click', () => {
+            productImageFile.click();
+        });
+    }
+
+    if (productImageFile) {
+        productImageFile.addEventListener('change', handleImageSelect);
+    }
+
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', removeSelectedImage);
+    }
 }
 
 // Image upload functions
