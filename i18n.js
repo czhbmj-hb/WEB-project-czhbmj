@@ -24,7 +24,7 @@ const i18n = {
             hero_contact: 'Contact Sales',
 
             // About Section
-            about_title: 'About CHANGZHOU NEW SOUTH WALES TRADING',
+            about_title: 'CHANGZHOU NEW SOUTH WALES TRADING',
             company_name: 'CHANGZHOU NEW SOUTH WALES TRADING',
             about_subtitle: 'Industry-leading fastening solutions since 2015',
             about_description: 'Changzhou New South Wales Trading Co., Ltd. is a limited liability company established on 20 Oct 2015 and based at No. 96 Huaide South Road, Zhonglou District, Changzhou, China. Guided by legal representative Ms. Tang Wenting, the company engages in the wholesale and retail of industrial hardware and related materials, including (non-hazardous) packaging and decorative materials, hardware & fasteners, building materials, electrical and lighting supplies, solar-related products, electronic products, machinery & equipment, and auto parts. Where permitted by law, the company may conduct goods and technology import & export (items subject to approval are carried out after obtaining the required licenses).',
@@ -197,7 +197,7 @@ const i18n = {
             hero_contact: '联系销售',
 
             // About Section
-            about_title: '关于常州纽修威商贸',
+            about_title: '常州纽修威商贸',
             company_name: '常州纽修威商贸',
             about_subtitle: '自2015年以来的行业领先紧固解决方案',
             about_description: '常州纽修威商贸有限公司是一家于2015年10月20日成立的有限责任公司，位于中国常州市钟楼区怀德南路96号。公司由法定代表人唐文婷女士领导，从事工业五金及相关材料的批发和零售，包括（非危险）包装和装饰材料、五金紧固件、建筑材料、电气和照明用品、太阳能相关产品、电子产品、机械设备和汽车零部件。在法律允许的范围内，公司可以进行货物和技术的进出口（需要审批的项目在获得所需许可证后方可进行）。',
