@@ -1,6 +1,6 @@
-# NaxiWell Industrial & Hardware Supplier
+# CHANGZHOU NEW SOUTH WALES TRADING Co.,Ltd - Industrial Bearing Supplier
 
-A modern e-commerce website for NaxiWell Industrial, showcasing industrial fasteners and hardware products with integrated Supabase backend and Vercel deployment.
+A modern e-commerce website for CHANGZHOU NEW SOUTH WALES TRADING Co.,Ltd, showcasing industrial fasteners and bearing products with integrated Supabase backend and Vercel deployment.
 
 ## 🌟 Features
 
