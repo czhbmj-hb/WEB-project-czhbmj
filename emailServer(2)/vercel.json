@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/send-email.php": {
+      "runtime": "vercel-php@0.7.1",
+      "maxDuration": 30
+    }
+  }
+}

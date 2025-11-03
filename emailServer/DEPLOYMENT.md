@@ -29,7 +29,7 @@ SMTP_PORT=465
 SMTP_SECURE=true
 SMTP_USER=czhbmj@gmail.com
 SMTP_PASS=vppynckowzzftoup
-RECIPIENT_EMAIL=stickypoooop@gmail.com
+RECIPIENT_EMAIL=zhangyanbin_1@hotmail.com
 CC_EMAIL=
 ```
 

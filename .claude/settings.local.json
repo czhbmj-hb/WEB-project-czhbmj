@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(open index.html)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(vercel list:*)",
+      "Bash(vercel env ls:*)",
+      "Bash(vercel env rm:*)",
+      "Bash(vercel env add:*)",
+      "Bash(vercel --prod)"
     ],
     "deny": [],
     "ask": []
