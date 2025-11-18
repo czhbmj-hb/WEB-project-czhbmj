@@ -18,7 +18,7 @@ const i18n = {
             nav_cart: 'Cart',
 
             // Hero Section
-            hero_title: 'CHANGZHOU NEW SOUTH WALES TRADING Co.,Ltd Quality Fasteners & Bearing',
+            hero_title: 'CHANGZHOU NEW SOUTH WALES TRADING Co.,Ltd Quality Fasteners & Bearings',
             hero_subtitle: 'Your trusted partner for industrial-grade fastening solutions. Quality guaranteed, delivered on time.',
             hero_browse: 'Browse Products',
             hero_contact: 'Contact Sales',
@@ -69,7 +69,7 @@ const i18n = {
             contact_phone: 'Phone',
             contact_email: 'Email',
             contact_hours: 'Business Hours',
-            contact_hours_detail: 'Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 2:00 PM',
+            contact_hours_detail: '7 days and 24 hours all day',
 
             // Footer
             footer_tagline: 'Your trusted partner for quality hardware solutions since 2015.',
@@ -242,7 +242,7 @@ const i18n = {
             contact_phone: '电话',
             contact_email: '邮箱',
             contact_hours: '营业时间',
-            contact_hours_detail: '周一至周五：上午8:00 - 下午6:00<br>周六：上午9:00 - 下午2:00',
+            contact_hours_detail: '7天24小时全天候',
 
             // Footer
             footer_tagline: '自2015年以来，您值得信赖的优质五金解决方案合作伙伴。',

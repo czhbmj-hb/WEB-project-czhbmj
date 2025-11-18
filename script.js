@@ -1535,3 +1535,57 @@ window.addCategory = addCategory;
 window.addMaterial = addMaterial;
 window.deleteCategory = deleteCategory;
 window.deleteMaterial = deleteMaterial;
+
+// Expert Support Card and Contact Sales Button Click Handlers
+document.addEventListener('DOMContentLoaded', function() {
+    const expertSupportCard = document.getElementById('expertSupportCard');
+    const contactSalesBtn = document.getElementById('contactSalesBtn');
+    const phoneCard = document.getElementById('phoneCard');
+
+    // Function to highlight phone card
+    function highlightPhoneCard() {
+        if (phoneCard) {
+            // Add highlight animation to phone card after scrolling
+            setTimeout(function() {
+                phoneCard.classList.add('highlight-animation');
+
+                // Remove the animation class after it completes
+                setTimeout(function() {
+                    phoneCard.classList.remove('highlight-animation');
+                }, 2000);
+            }, 800); // Wait for scroll to complete
+        }
+    }
+
+    // Expert Support Card Click Handler
+    if (expertSupportCard && phoneCard) {
+        expertSupportCard.addEventListener('click', function() {
+            // Smooth scroll to contact section
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                highlightPhoneCard();
+            }
+        });
+    }
+
+    // Contact Sales Button Click Handler
+    if (contactSalesBtn && phoneCard) {
+        contactSalesBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent default anchor behavior
+
+            // Smooth scroll to contact section
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                highlightPhoneCard();
+            }
+        });
+    }
+});
