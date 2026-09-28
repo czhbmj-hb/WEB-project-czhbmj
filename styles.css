@@ -1648,3 +1648,14 @@ body {
     border-radius: 10px;
     transition: all 0.3s ease;
 }
+/* Keep loading failures distinct from an empty catalog. */
+.catalog-status {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fff8e6;
+    border: 1px solid #e5c675;
+    border-radius: 8px;
+}
+.catalog-status[hidden], .catalog-status button[hidden] { display: none; }
+.catalog-status button { margin-left: 0.75rem; }
+.product-draft-note { color: var(--text-gray); font-size: 0.875rem; margin-bottom: 1rem; }

@@ -306,26 +306,65 @@ let products = [];
 
 // Flag to track if initial data load is complete
 let isDataLoaded = false;
+let catalogLoading = false;
+let catalogError = false;
+let productLoadId = 0;
+let productRevision = 0;
+
+function showCatalogStatus(state) {
+    const text = state === 'loading' ? i18n.t('catalog_loading') : i18n.t('catalog_load_error');
+    ['catalogStatus', 'adminCatalogStatus'].forEach(id => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        element.hidden = state === 'ready';
+        element.querySelector('[data-status-text]').textContent = text;
+        element.querySelector('button').hidden = state !== 'error';
+    });
+}
+
+function applySavedProduct(product) {
+    const saved = { ...product, price: parseFloat(product.price) };
+    const index = products.findIndex(p => String(p.id) === String(saved.id));
+    if (index === -1) products.unshift(saved);
+    else products[index] = saved;
+    productRevision++;
+    isDataLoaded = true;
+    catalogError = false;
+    showCatalogStatus('ready');
+    renderProducts();
+    renderAdminProducts();
+}
 
 // Function to load products from Supabase
 async function loadProductsFromDB() {
+    const requestId = ++productLoadId;
+    const revision = productRevision;
+    catalogLoading = true;
+    catalogError = false;
+    showCatalogStatus('loading');
     try {
         const data = await db.products.getAll();
-        products = data.map(p => ({
-            id: p.id,
-            name: p.name,
-            category: p.category,
-            material: p.material,
-            price: parseFloat(p.price),
-            size: p.size,
-            description: p.description,
-            image: p.image
-        }));
+        if (requestId !== productLoadId) return false;
+        // A query started before a successful save must not replace the saved row.
+        if (revision === productRevision) {
+            products = data.map(p => ({ ...p, price: parseFloat(p.price) }));
+        }
         isDataLoaded = true;
+        catalogLoading = false;
+        showCatalogStatus('ready');
         renderProducts();
+        if (document.getElementById('adminDashboard').classList.contains('active')) renderAdminProducts();
+        return true;
     } catch (error) {
+        if (requestId !== productLoadId) return false;
+        catalogError = true;
+        catalogLoading = false;
         console.error('Error loading products:', error);
-        alert('Failed to load products. Please refresh the page.');
+        showCatalogStatus('error');
+        if (document.getElementById('adminDashboard').classList.contains('active')) renderAdminProducts();
+        return false;
+    } finally {
+        if (requestId === productLoadId) catalogLoading = false;
     }
 }
 
@@ -334,6 +373,7 @@ async function loadCategoriesFromDB() {
         categoriesData = await db.categories.getAll();
         updateCategoryOptions();
         renderCategorySidebar(); // Update sidebar when categories change
+        if (isDataLoaded) renderProducts();
     } catch (error) {
         console.error('Error loading categories:', error);
     }
@@ -396,6 +436,8 @@ async function loadMaterialsFromDB() {
     try {
         materialsData = await db.materials.getAll();
         updateMaterialOptions();
+        updateCategoryOptions(); // Material filter options depend on this query, not category timing.
+        if (isDataLoaded) renderProducts();
     } catch (error) {
         console.error('Error loading materials:', error);
     }
@@ -423,6 +465,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeLanguageSystem();
     updateCartCount();
     checkAdminSession();
+    ['retryCatalog', 'retryAdminCatalog'].forEach(id => {
+        document.getElementById(id).addEventListener('click', () => {
+            loadProductsFromDB();
+            loadCategoriesFromDB();
+            loadMaterialsFromDB();
+        });
+    });
+    document.getElementById('productForm').addEventListener('input', persistProductDraft);
+    document.getElementById('productForm').addEventListener('submit', event => {
+        event.preventDefault();
+        saveProduct();
+    });
+    window.addEventListener('beforeunload', event => {
+        if (savingProduct || productFormDirty) {
+            persistProductDraft();
+            event.preventDefault();
+            event.returnValue = '';
+        }
+    });
 
     // Load data from Supabase
     await Promise.all([
@@ -511,6 +572,10 @@ function initializeEventListeners() {
     // Close modals on outside click
     window.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal')) {
+            if (e.target.id === 'productFormModal') {
+                closeProductForm();
+                return;
+            }
             e.target.classList.remove('active');
         }
     });
@@ -518,6 +583,7 @@ function initializeEventListeners() {
 
 // Render Products
 function renderProducts() {
+    if (!isDataLoaded) return;
     let filteredProducts = products.filter(product => {
         // Category filter
         if (currentCategory !== 'all' && product.category !== currentCategory) return false;
@@ -929,12 +995,15 @@ function logoutAdmin() {
 }
 
 function openProductForm(productId = null) {
+    if (savingProduct) return;
     const modal = document.getElementById('productFormModal');
     const form = document.getElementById('productForm');
     const title = document.getElementById('productFormTitle');
 
     form.reset();
-    removeSelectedImage(); // Clear image upload state
+    removeSelectedImage(false); // Clear image upload state
+    productFormDirty = false;
+    pendingProductId = null;
 
     if (productId) {
         const product = products.find(p => String(p.id) === String(productId));
@@ -965,13 +1034,56 @@ function openProductForm(productId = null) {
     }
 
     modal.classList.add('active');
+    restoreProductDraft(productId);
 }
 
 function closeProductForm() {
+    if (savingProduct) return;
+    if (productFormDirty) persistProductDraft();
     document.getElementById('productFormModal').classList.remove('active');
 }
 
+const PRODUCT_DRAFT_KEY = 'naxiwell_product_draft';
+const PRODUCT_FIELDS = ['productId', 'productName', 'productCategory', 'productMaterial', 'productPrice', 'productSize', 'productDescription', 'productDescriptionZh'];
+let savingProduct = false;
+let productFormDirty = false;
+let pendingProductId = null;
+
+function persistProductDraft() {
+    productFormDirty = true;
+    const draft = { fields: {}, imageUrl: currentImageUrl, needsImage: !!selectedImageFile, pendingProductId };
+    PRODUCT_FIELDS.forEach(id => { draft.fields[id] = document.getElementById(id).value; });
+    try { sessionStorage.setItem(PRODUCT_DRAFT_KEY, JSON.stringify(draft)); }
+    catch (error) { console.error('Could not retain product draft:', error); }
+}
+
+function restoreProductDraft(productId) {
+    try {
+        const draft = JSON.parse(sessionStorage.getItem(PRODUCT_DRAFT_KEY) || 'null');
+        if (!draft || String(draft.fields.productId || '') !== String(productId || '')) return;
+        if (!confirm(i18n.t('product_restore_draft'))) return;
+        PRODUCT_FIELDS.forEach(id => { document.getElementById(id).value = draft.fields[id] || ''; });
+        currentImageUrl = draft.needsImage ? null : (draft.imageUrl || null);
+        pendingProductId = draft.pendingProductId || null;
+        productFormDirty = true;
+        document.getElementById('imagePreview').style.display = currentImageUrl ? 'block' : 'none';
+        if (currentImageUrl) {
+            document.getElementById('previewImg').src = currentImageUrl;
+            document.getElementById('imagePreview').style.display = 'block';
+        }
+        if (draft.needsImage) alert(i18n.t('product_reselect_image'));
+    } catch (error) { console.error('Could not restore product draft:', error); }
+}
+
+function setProductSaving(saving) {
+    savingProduct = saving;
+    document.getElementById('productForm').querySelectorAll('input, select, textarea, button').forEach(element => { element.disabled = saving; });
+    ['saveProduct', 'closeProductForm', 'cancelProductForm'].forEach(id => { document.getElementById(id).disabled = saving; });
+    document.getElementById('saveProduct').textContent = i18n.t(saving ? 'product_saving' : 'product_save');
+}
+
 async function saveProduct() {
+    if (savingProduct) return;
     const form = document.getElementById('productForm');
 
     // Validate required fields
@@ -987,59 +1099,52 @@ async function saveProduct() {
     }
 
     const productId = document.getElementById('productId').value;
-    let imageUrl = currentImageUrl;
+    const productData = {
+        name: document.getElementById('productName').value.trim(),
+        category: document.getElementById('productCategory').value,
+        material: document.getElementById('productMaterial').value,
+        price: parseFloat(document.getElementById('productPrice').value),
+        size: document.getElementById('productSize').value.trim(),
+        description: document.getElementById('productDescription').value,
+        description_zh: document.getElementById('productDescriptionZh').value || null
+    };
+    if (!productData.name || !productData.size || !Number.isFinite(productData.price) || productData.price < 0) {
+        alert(i18n.t('product_invalid_fields'));
+        return;
+    }
+    persistProductDraft();
+    setProductSaving(true);
 
     try {
         // Upload new image if selected
         if (selectedImageFile) {
-            // Show uploading message
-            const saveBtn = document.getElementById('saveProduct');
-            const originalText = saveBtn.textContent;
-            saveBtn.textContent = 'Uploading image...';
-            saveBtn.disabled = true;
-
-            // Upload to Supabase Storage
-            imageUrl = await db.storage.uploadImage(selectedImageFile);
-
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
+            currentImageUrl = await db.storage.uploadImage(selectedImageFile);
+            selectedImageFile = null;
+            persistProductDraft();
         }
-
-        const productData = {
-            name: document.getElementById('productName').value,
-            category: document.getElementById('productCategory').value,
-            material: document.getElementById('productMaterial').value,
-            price: parseFloat(document.getElementById('productPrice').value),
-            size: document.getElementById('productSize').value,
-            image: imageUrl,
-            description: document.getElementById('productDescription').value,
-            description_zh: document.getElementById('productDescriptionZh').value || null
-        };
-
+        productData.image = currentImageUrl;
+        let saved;
         if (productId) {
-            // Edit existing product in Supabase
-            await db.products.update(productId, productData);
+            saved = await db.products.update(productId, productData);
         } else {
-            // Add new product to Supabase
-            await db.products.create(productData);
+            pendingProductId = pendingProductId || crypto.randomUUID();
+            persistProductDraft();
+            saved = await db.products.create({ ...productData, id: pendingProductId });
         }
-
-        // Reload products from database
-        await loadProductsFromDB();
-        renderAdminProducts();
-        closeProductForm();
-
-        // Reset image upload state
+        // Use the row confirmed by the server; a failed follow-up read must not hide it.
+        applySavedProduct(saved);
+        productFormDirty = false;
+        pendingProductId = null;
+        try { sessionStorage.removeItem(PRODUCT_DRAFT_KEY); } catch (error) { console.error(error); }
+        document.getElementById('productFormModal').classList.remove('active');
         selectedImageFile = null;
         currentImageUrl = null;
     } catch (error) {
         console.error('Error saving product:', error);
-        alert('Failed to save product. Please try again.\nError: ' + error.message);
-
-        // Re-enable button if disabled
-        const saveBtn = document.getElementById('saveProduct');
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Product';
+        persistProductDraft();
+        alert(i18n.t('product_save_retained') + '\n' + error.message);
+    } finally {
+        setProductSaving(false);
     }
 }
 
@@ -1186,6 +1291,7 @@ function handleImageSelect(event) {
 
     // Store the file
     selectedImageFile = file;
+    persistProductDraft();
 
     // Update file name display
     document.getElementById('imageFileName').textContent = file.name;
@@ -1199,12 +1305,14 @@ function handleImageSelect(event) {
     reader.readAsDataURL(file);
 }
 
-function removeSelectedImage() {
+function removeSelectedImage(retainDraft = true) {
     selectedImageFile = null;
+    currentImageUrl = null;
     document.getElementById('productImageFile').value = '';
     document.getElementById('imageFileName').textContent = '';
     document.getElementById('imagePreview').style.display = 'none';
     document.getElementById('previewImg').src = '';
+    if (retainDraft) persistProductDraft();
 }
 
 // ============================================================
@@ -1408,6 +1516,10 @@ async function deleteMaterial(id, name) {
 
 function renderAdminProducts() {
     const tableContainer = document.getElementById('adminProductsTable');
+    if (!isDataLoaded) {
+        tableContainer.textContent = i18n.t(catalogError ? 'catalog_load_error' : 'catalog_loading');
+        return;
+    }
 
     // Filter products based on admin search
     let filteredProducts = products;
@@ -1501,6 +1613,7 @@ function initializeLanguageSystem() {
 
     // Listen for language change events
     document.addEventListener('languageChanged', () => {
+        showCatalogStatus(catalogLoading ? 'loading' : catalogError ? 'error' : 'ready');
         // Re-render categories and materials with new language
         renderCategorySidebar();
         updateMaterialOptions();

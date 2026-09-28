@@ -4,6 +4,7 @@
   "description": "NaxiWell Industrial & Hardware Supplier - E-commerce website for industrial fasteners and hardware",
   "main": "index.html",
   "scripts": {
+    "test": "node --test tests/*.test.cjs",
     "dev": "npx serve .",
     "build": "echo 'No build step required for static site'",
     "preview": "npx serve ."

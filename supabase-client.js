@@ -6,7 +6,39 @@ const SUPABASE_URL = window.APP_CONFIG.supabase.url;
 const SUPABASE_ANON_KEY = window.APP_CONFIG.supabase.anonKey;
 
 // Initialize Supabase client
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+async function databaseFetch(input, options = {}) {
+    const controller = new AbortController();
+    const abort = () => controller.abort();
+    if (options.signal?.aborted) abort();
+    options.signal?.addEventListener('abort', abort, { once: true });
+    const timeout = setTimeout(abort, (options.method || 'GET').toUpperCase() === 'GET' ? 12000 : 45000);
+    try {
+        return await fetch(input, { ...options, signal: controller.signal });
+    } finally {
+        clearTimeout(timeout);
+        options.signal?.removeEventListener('abort', abort);
+    }
+}
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { fetch: databaseFetch }
+});
+
+// Only reads are retried automatically. Repeating a write can duplicate products.
+async function readRows(query) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+        let result;
+        try { result = await query(); }
+        catch (error) { result = { error }; }
+        const { data, error, status } = result;
+        if (!error) {
+            if (!Array.isArray(data)) throw new Error('Invalid database response');
+            return data;
+        }
+        if (attempt === 2 || (status >= 400 && status < 500 && status !== 408 && status !== 429)) throw error;
+        await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+    }
+}
 
 // Storage configuration
 const STORAGE_BUCKET = 'product-images';
@@ -61,13 +93,10 @@ const db = {
     // Products operations
     products: {
         async getAll() {
-            const { data, error } = await supabaseClient
+            return readRows(() => supabaseClient
                 .from('products')
                 .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            return data;
+                .order('created_at', { ascending: false }));
         },
 
         async getById(id) {
@@ -88,6 +117,10 @@ const db = {
                 .select()
                 .single();
 
+            // A manual retry after a lost response uses the same draft UUID.
+            if (error?.code === '23505' && productData.id) {
+                return db.products.update(productData.id, productData);
+            }
             if (error) throw error;
             return data;
         },
@@ -142,13 +175,10 @@ const db = {
     // Categories operations
     categories: {
         async getAll() {
-            const { data, error } = await supabaseClient
+            return readRows(() => supabaseClient
                 .from('categories')
                 .select('*')
-                .order('display_name', { ascending: true });
-
-            if (error) throw error;
-            return data;
+                .order('display_name', { ascending: true }));
         },
 
         async create(categoryData) {
@@ -189,13 +219,10 @@ const db = {
     // Materials operations
     materials: {
         async getAll() {
-            const { data, error } = await supabaseClient
+            return readRows(() => supabaseClient
                 .from('materials')
                 .select('*')
-                .order('display_name', { ascending: true });
-
-            if (error) throw error;
-            return data;
+                .order('display_name', { ascending: true }));
         },
 
         async create(materialData) {
