@@ -96,6 +96,10 @@
                         </div>
                     </div>
 
+                    <div id="catalogStatus" class="catalog-status" role="status" hidden>
+                        <span data-status-text></span>
+                        <button type="button" class="btn btn-secondary btn-small" id="retryCatalog" data-i18n="catalog_retry">Retry loading</button>
+                    </div>
                     <div id="productsGrid" class="products-grid">
                         <!-- Products will be loaded here by JavaScript -->
                     </div>
@@ -387,6 +391,10 @@
                         <input type="text" id="adminSearchInput" data-i18n="admin_search_placeholder" placeholder="Search products by name, category, material, size, price...">
                     </div>
 
+                    <div id="adminCatalogStatus" class="catalog-status" role="status" hidden>
+                        <span data-status-text></span>
+                        <button type="button" class="btn btn-secondary" id="retryAdminCatalog" data-i18n="catalog_retry">Retry loading</button>
+                    </div>
                     <div id="adminProductsTable" class="admin-products-table">
                         <!-- Products table will be rendered here -->
                     </div>
@@ -403,6 +411,7 @@
                 <button class="close-btn" id="closeProductForm">&times;</button>
             </div>
             <div class="modal-body">
+                <p class="product-draft-note" data-i18n="product_draft_note">Unsaved text is kept in this browser tab. After refreshing, choose any unuploaded image again.</p>
                 <form id="productForm">
                     <div class="form-row">
                         <div class="form-group">

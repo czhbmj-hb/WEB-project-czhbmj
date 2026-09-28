@@ -179,7 +179,16 @@ const i18n = {
             msg_material_in_use: '❌ Cannot delete this material: It is currently being used by products.',
             msg_error_saving: 'Failed to save product. Please try again.',
             msg_error_deleting: 'Failed to delete product. Please try again.',
-            msg_fill_both_names: 'Please enter both name and display name'
+            msg_fill_both_names: 'Please enter both name and display name',
+            catalog_loading: "Loading products…",
+            catalog_load_error: "Products could not be refreshed. Check your connection and retry. Any products already shown have been kept.",
+            catalog_retry: "Retry loading",
+            product_restore_draft: "Restore your unsaved product draft?",
+            product_reselect_image: "Your text has been restored. Please select the image again before saving.",
+            product_saving: "Saving…",
+            product_invalid_fields: "Enter a product name, size, and valid non-negative price.",
+            product_save_retained: "Could not confirm the save. Your form and uploaded image have been kept. Please retry.",
+            product_draft_note: "Unsaved text is kept in this browser tab, including after refresh. An image that has not finished uploading must be selected again."
         },
 
         zh: {
@@ -352,7 +361,16 @@ const i18n = {
             msg_material_in_use: '❌ 无法删除此材料：该材料正在被产品使用。',
             msg_error_saving: '保存产品失败。请重试。',
             msg_error_deleting: '删除产品失败。请重试。',
-            msg_fill_both_names: '请输入名称和显示名称'
+            msg_fill_both_names: '请输入名称和显示名称',
+            catalog_loading: "正在加载产品…",
+            catalog_load_error: "产品暂时加载失败，请检查网络后重试。已显示的产品会保留。",
+            catalog_retry: "重新加载",
+            product_restore_draft: "发现尚未保存的产品草稿，是否恢复？",
+            product_reselect_image: "文字内容已恢复，请重新选择图片后再保存。",
+            product_saving: "正在保存…",
+            product_invalid_fields: "请填写产品名称、规格和有效的非负价格。",
+            product_save_retained: "暂时无法确认保存结果。填写内容和已上传图片已保留，请重试。",
+            product_draft_note: "未保存的文字会在当前浏览器标签页保留，刷新后可恢复；尚未上传完成的图片需要重新选择。"
         }
     },
 
